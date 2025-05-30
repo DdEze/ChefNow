@@ -6,7 +6,7 @@ const RecipeSchema = new mongoose.Schema({
   area:        { type: String },
   ingredients: { type: [String], required: true },
   instructions:{ type: String, required: true },
-  image:       { type: String },
+  image:       { type: String, default: '' },
   video:       { type: String },
   author:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });

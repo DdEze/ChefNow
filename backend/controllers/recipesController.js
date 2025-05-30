@@ -1,7 +1,8 @@
 const Recipe = require('../models/Recipe');
 
 const createRecipe = async (req, res) => {
-  const { title, category, area, ingredients, instructions, image, video } = req.body;
+  const { title, category, area, ingredients, instructions, video } = req.body;
+  const image = req.file ? req.file.path : req.body.image || '';
 
   try {
     const recipe = new Recipe({
