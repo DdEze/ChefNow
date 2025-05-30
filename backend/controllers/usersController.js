@@ -1,24 +1,31 @@
 const User = require('../models/User');
+const Recipe = require('../models/Recipe');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const registerUser = async (req, res) => {
-  const { username, name, email, password } = req.body;
+  const { name, surname, email, password } = req.body;
 
-  try {
-    const userExist = await User.findOne({ email });
-    if (userExist) return res.status(400).json({ message: 'El email ya está registrado' });
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPass = await bcrypt.hash(password, salt);
-
-    const user = new User({ username, name, email, password: hashedPass });
-    await user.save();
-
-    res.status(201).json({ message: 'Usuario creado correctamente' });
-  } catch (err) {
-    res.status(500).json({ message: 'Error del servidor', error: err.message });
+  if (!name || !surname || !email || !password) {
+    return res.status(400).json({ message: 'Faltan datos obligatorios' });
   }
+
+  const existingEmail = await User.findOne({ email });
+  if (existingEmail) {
+    return res.status(400).json({ message: 'Ya existe un usuario con ese email' });
+  }
+
+  const existingNameSurname = await User.findOne({ name, surname });
+  if (existingNameSurname) {
+    return res.status(400).json({ message: 'Ya existe un usuario con ese nombre y apellido' });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = new User({ name, surname, email, password: hashedPassword });
+  await user.save();
+
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+  res.status(201).json({ token });
 };
 
 const loginUser = async (req, res) => {
@@ -33,7 +40,7 @@ const loginUser = async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-    res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
+    res.json({ token, user: { id: user._id, surname: user.surname, name: user.name, email: user.email } });
   } catch (err) {
     res.status(500).json({ message: 'Error del servidor', error: err.message });
   }
@@ -48,4 +55,16 @@ const getProfile = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getProfile };
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    await Recipe.deleteMany({ author: userId });
+    await User.findByIdAndDelete(userId);
+
+    res.json({ message: 'Cuenta y recetas eliminadas correctamente' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al eliminar cuenta', error: err.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, getProfile, deleteUser };
