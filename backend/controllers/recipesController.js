@@ -76,7 +76,7 @@ const deleteRecipe = async (req, res) => {
       return res.status(403).json({ message: 'No autorizado para eliminar esta receta' });
     }
 
-    await recipe.remove();
+    await Recipe.findByIdAndDelete(req.params.id);
     res.json({ message: 'Receta eliminada' });
   } catch (err) {
     res.status(500).json({ message: 'Error al eliminar receta', error: err.message });
