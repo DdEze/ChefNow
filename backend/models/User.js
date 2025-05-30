@@ -20,7 +20,13 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  favorites: [
+    {
+      mealId: String,
+      source: { type: String, enum: ['external', 'custom'], default: 'external' }
+    }
+  ]
 });
 
 userSchema.index({ name: 1, surname: 1 }, { unique: true });
