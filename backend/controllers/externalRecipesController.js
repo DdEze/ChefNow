@@ -27,4 +27,22 @@ const searchRecipes = async (req, res) => {
   }
 };
 
-module.exports = { searchRecipes };
+const getRecipeById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
+    const meal = response.data.meals ? response.data.meals[0] : null;
+
+    if (!meal) {
+      return res.status(404).json({ message: 'Receta no encontrada' });
+    }
+
+    res.json(meal);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener receta', error: error.message });
+  }
+};
+
+
+module.exports = { searchRecipes, getRecipeById };

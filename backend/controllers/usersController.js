@@ -32,19 +32,33 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    console.log('Login attempt:', email);
+    console.log('Password (raw):', password);
+
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Credenciales inválidas' });
+    if (!user) {
+      console.log('Usuario no encontrado');
+      return res.status(400).json({ message: 'Credenciales inválidas' });
+    }
+
+    console.log('Password guardada:', user.password);
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Credenciales inválidas' });
+    console.log('Comparación resultado:', isMatch);
+    if (!isMatch) {
+      console.log('Contraseña incorrecta');
+      return res.status(400).json({ message: 'Credenciales inválidas' });
+    }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-    res.json({ token, user: { id: user._id, surname: user.surname, name: user.name, email: user.email } });
+    return res.json({ token, user: { id: user._id, surname: user.surname, name: user.name, email: user.email } });
   } catch (err) {
-    res.status(500).json({ message: 'Error del servidor', error: err.message });
+    console.error('Login error:', err);  // Este log debe mostrar la causa del 500
+    return res.status(500).json({ message: 'Error del servidor', error: err.message });
   }
 };
+
 
 const getProfile = async (req, res) => {
   try {
@@ -67,4 +81,20 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getProfile, deleteUser };
+const getUserById = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId).select('-password'); // excluís el password
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al obtener el usuario' });
+    }
+};
+
+module.exports = { registerUser, loginUser, getProfile, deleteUser, getUserById };

@@ -16,7 +16,5 @@ app.use('/api/recipes', require('./routes/recipes'));
 app.use('/api/external', require('./routes/externalRecipes'));
 app.use('/api/favorites', require('./routes/favorites'));
 
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
-

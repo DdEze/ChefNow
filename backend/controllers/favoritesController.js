@@ -1,6 +1,5 @@
 const User = require('../models/User');
 
-// Agregar receta a favoritos
 const addFavorite = async (req, res) => {
   const { mealId, source } = req.body;
 
