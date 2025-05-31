@@ -1,12 +1,17 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import RecipeDetail from './pages/RecipeDetails';
-
+import RecipeForm from './components/RecipeForm';
+import MyRecipes from './pages/MyRecipes';
 
 function App() {
+  const { user } = useContext(AuthContext);
+
   return (
     <div>
       <Navbar />
@@ -15,6 +20,8 @@ function App() {
         <Route path="/iniciar-sesion" element={<Login />} />
         <Route path="/registrarse" element={<Register />} />
         <Route path="/receta/:id" element={<RecipeDetail />} />
+        <Route path="/create" element={user ? <RecipeForm /> : <Navigate to="/iniciar-sesion" />} />
+        <Route path="/my-recipes" element={user ? <MyRecipes /> : <Navigate to="/iniciar-sesion" />} />
       </Routes>
     </div>
   );

@@ -13,7 +13,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const res = await userAPI.post('/users/login', { email, password });
+      const res = await userAPI.post('/login', { email, password });
       login(res.data.user, res.data.token);
       navigate('/');
     } catch (error) {

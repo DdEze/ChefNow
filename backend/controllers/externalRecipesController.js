@@ -38,11 +38,10 @@ const getRecipeById = async (req, res) => {
       return res.status(404).json({ message: 'Receta no encontrada' });
     }
 
-    res.json(meal);
+    res.json({ meals: [meal] });
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener receta', error: error.message });
   }
 };
-
 
 module.exports = { searchRecipes, getRecipeById };

@@ -12,8 +12,9 @@ const RecipeDetail = () => {
     const fetchRecipe = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`/api/external/recipe/${id}`);
-        setRecipe(res.data);
+        const res = await axios.get(`http://localhost:5000/api/external/recipe/${id}`);
+        setRecipe(res.data.meals[0]);
+        console.log('Receta obtenida:', res.data);
       } catch (err) {
         setError('No se pudo cargar la receta');
       } finally {

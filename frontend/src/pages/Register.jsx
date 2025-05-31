@@ -18,7 +18,7 @@ function Register() {
     e.preventDefault();
 
     try {
-      await userAPI.post('/users/register', form);
+      await userAPI.post('/register', form);
       alert('Registrado correctamente. Iniciá sesión.');
       navigate('/iniciar-sesion');
     } catch (error) {

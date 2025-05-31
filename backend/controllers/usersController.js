@@ -32,19 +32,12 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    console.log('Login attempt:', email);
-    console.log('Password (raw):', password);
-
     const user = await User.findOne({ email });
     if (!user) {
       console.log('Usuario no encontrado');
       return res.status(400).json({ message: 'Credenciales inválidas' });
     }
-
-    console.log('Password guardada:', user.password);
-
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log('Comparación resultado:', isMatch);
     if (!isMatch) {
       console.log('Contraseña incorrecta');
       return res.status(400).json({ message: 'Credenciales inválidas' });
@@ -54,7 +47,7 @@ const loginUser = async (req, res) => {
 
     return res.json({ token, user: { id: user._id, surname: user.surname, name: user.name, email: user.email } });
   } catch (err) {
-    console.error('Login error:', err);  // Este log debe mostrar la causa del 500
+    console.error('Login error:', err);
     return res.status(500).json({ message: 'Error del servidor', error: err.message });
   }
 };
