@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import RecipeDetail from './pages/RecipeDetails';
 import RecipeForm from './components/RecipeForm';
 import MyRecipes from './pages/MyRecipes';
+import Favorites from './pages/Favorites';
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -22,6 +23,7 @@ function App() {
         <Route path="/receta/:id" element={<RecipeDetail />} />
         <Route path="/create" element={user ? <RecipeForm /> : <Navigate to="/iniciar-sesion" />} />
         <Route path="/my-recipes" element={user ? <MyRecipes /> : <Navigate to="/iniciar-sesion" />} />
+        <Route path="/favoritos" element={user ? <Favorites /> : <Navigate to="/iniciar-sesion" />} />
       </Routes>
     </div>
   );

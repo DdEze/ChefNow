@@ -20,7 +20,7 @@ function Navbar() {
       <div>
         {user ? (
           <>
-            <span style={{ marginRight: '1rem' }}>Hola, {user.name || 'Usuario'}</span>
+            <span style={{ marginRight: '1rem' }}>Hola, {`${user.surname} ${user.name}` || 'Usuario'}</span>
             <button onClick={logout}>Salir</button>
           </>
         ) : (

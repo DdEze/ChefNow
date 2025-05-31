@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userAPI } from '../services/api';
+import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 function Login() {
@@ -13,7 +13,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const res = await userAPI.post('/login', { email, password });
+      const res = await api.post('/users/login', { email, password });
       login(res.data.user, res.data.token);
       navigate('/');
     } catch (error) {

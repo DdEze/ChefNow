@@ -55,7 +55,7 @@ function Home() {
     setLoading(true);
     try {
       const res = await fetchRecipes({ q: query, category, area, ingredient });
-      setRecipes(res.data);
+      setRecipes(res.data.meals || []);
       setPage(1);
     } catch (err) {
       console.error('Error al buscar recetas', err);

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userAPI } from '../services/api';
+import { api } from '../services/api';
 
 function Register() {
   const [form, setForm] = useState({
@@ -18,7 +18,7 @@ function Register() {
     e.preventDefault();
 
     try {
-      await userAPI.post('/register', form);
+      await api.post('/users/register', form);
       alert('Registrado correctamente. Iniciá sesión.');
       navigate('/iniciar-sesion');
     } catch (error) {

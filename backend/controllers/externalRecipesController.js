@@ -21,7 +21,7 @@ const searchRecipes = async (req, res) => {
     const response = await axios.get(url);
     const data = response.data.meals || [];
 
-    res.json(data);
+    res.json({ meals: data });
   } catch (error) {
     res.status(500).json({ message: 'Error buscando recetas', error: error.message });
   }

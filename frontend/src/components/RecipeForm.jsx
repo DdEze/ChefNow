@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { recipelAPI } from '../services/api';
+import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 
@@ -46,7 +46,7 @@ export default function RecipeForm() {
     if (imageFile) formData.append('image', imageFile);
 
     try {
-      const res = await recipelAPI.post('/recipes', formData, {
+      const res = await api.post('/recipes', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setMessage('Receta creada con éxito');

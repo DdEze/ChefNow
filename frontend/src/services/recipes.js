@@ -1,5 +1,5 @@
-import { recipeAPI } from './api';
+import { api } from './api';
 
 export const fetchRecipes = (params) => {
-  return recipeAPI.get('/recipes', { params });
+  return api.get('/external/recipes', { params });
 };

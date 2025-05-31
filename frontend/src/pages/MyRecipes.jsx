@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
-import { recipelAPI } from '../services/api';
+import { useState, useEffect } from 'react';
+import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 
@@ -12,7 +12,7 @@ export default function MyRecipes() {
     if (!user) return;
     const fetchRecipes = async () => {
       try {
-        const res = await recipelAPI.get('/recipes/mine');
+        const res = await api.get('/recipes/mine');
         setRecipes(res.data);
       } catch (err) {
         setError('Error al cargar tus recetas');
