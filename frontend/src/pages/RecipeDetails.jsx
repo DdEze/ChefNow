@@ -1,21 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { api } from '../services/api';
 
 const RecipeDetail = () => {
-  const { id } = useParams();
+  let { id, source } = useParams();
+  if (!source) source = 'local';
+
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        setLoading(true);
-        const res = await axios.get(`http://localhost:5000/api/external/recipe/${id}`);
-        setRecipe(res.data.meals[0]);
-        console.log('Receta obtenida:', res.data);
+        console.log(source)
+        if (source === 'api') {
+          const response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
+          const data = await response.json();
+          setRecipe(data.meals ? data.meals[0] : null);
+          if (!data.meals) setError('Receta no encontrada en API externa');
+        } else if (source === 'local') {
+          const res = await api.get(`/recipes/${id}`);
+          setRecipe(res.data);
+        } else {
+          setError('Fuente desconocida');
+        }
       } catch (err) {
+        console.error(err);
         setError('No se pudo cargar la receta');
       } finally {
         setLoading(false);
@@ -23,59 +34,39 @@ const RecipeDetail = () => {
     };
 
     fetchRecipe();
-  }, [id]);
+  }, [id, source]);
 
-  if (loading) return <p>Cargando...</p>;
+  if (loading) return <p>Cargando receta...</p>;
   if (error) return <p>{error}</p>;
-  if (!recipe) return <p>No se encontró la receta.</p>;
+  if (!recipe) return <p>No se encontró la receta</p>;
 
-  const ingredients = [];
-  for (let i = 1; i <= 20; i++) {
-    const ingredient = recipe[`strIngredient${i}`];
-    const measure = recipe[`strMeasure${i}`];
-    if (ingredient && ingredient.trim() !== '') {
-      ingredients.push(`${measure} ${ingredient}`);
-    }
-  }
+  const isExternal = source === 'api';
+
+  const title = isExternal ? recipe.strMeal : recipe.title;
+  const image = isExternal ? recipe.strMealThumb : recipe.image;
+  const instructions = isExternal ? recipe.strInstructions : recipe.instructions;
+  const ingredients = isExternal
+    ? Array.from({ length: 20 }, (_, i) => {
+        const ingredient = recipe[`strIngredient${i + 1}`];
+        const measure = recipe[`strMeasure${i + 1}`];
+        return ingredient ? `${measure} ${ingredient}` : null;
+      }).filter(Boolean)
+    : recipe.ingredients;
 
   return (
     <div>
-      <h2>{recipe.strMeal}</h2>
-      <img src={recipe.strMealThumb} alt={recipe.strMeal} style={{ maxWidth: '400px' }} />
-
+      <h2>{title}</h2>
+      <img src={image} alt={title} />
       <h3>Ingredientes</h3>
       <ul>
-        {ingredients.map((item, idx) => (
-          <li key={idx}>{item}</li>
+        {ingredients.map((ing, i) => (
+          <li key={i}>{ing}</li>
         ))}
       </ul>
-
       <h3>Instrucciones</h3>
-      <p>{recipe.strInstructions}</p>
-
-      {recipe.strYoutube && (
-        <div>
-          <h3>Video</h3>
-          <iframe
-            title="Video receta"
-            width="560"
-            height="315"
-            src={`https://www.youtube.com/embed/${extractYoutubeId(recipe.strYoutube)}`}
-            frameBorder="0"
-            allowFullScreen
-          />
-        </div>
-      )}
-
-      <Link to="/">Volver al inicio</Link>
+      <p>{instructions}</p>
     </div>
   );
 };
-
-function extractYoutubeId(url) {
-  const regExp = /(?:youtube\.com\/.*v=|youtu\.be\/)([^&]+)/;
-  const match = url.match(regExp);
-  return match ? match[1] : null;
-}
 
 export default RecipeDetail;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchRecipes } from '../services/recipes';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import RecipeCard from '../components/RecipeCard';
 
 function Home() {
   const [recipes, setRecipes] = useState([]);
@@ -20,7 +20,6 @@ function Home() {
   const paginatedRecipes = recipes.slice(startIndex, startIndex + recipesPerPage);
   const totalPages = Math.ceil(recipes.length / recipesPerPage);
 
-  // Fetch listas
   const fetchAreas = async () => {
     try {
       const res = await axios.get('https://www.themealdb.com/api/json/v1/1/list.php?a=list');
@@ -118,11 +117,16 @@ function Home() {
       <div className="recipe-list">
         {paginatedRecipes.length === 0 && !loading && <p>No se encontraron recetas</p>}
         {paginatedRecipes.map((r) => (
-          <div key={r.idMeal} className="recipe-card">
-            <img src={r.strMealThumb} alt={r.strMeal} style={{ width: '100px' }} />
-            <h4>{r.strMeal}</h4>
-            <Link to={`/receta/${r.idMeal}`}>Ver detalles</Link>
-          </div>
+          <RecipeCard
+            key={r.idMeal}
+            recipe={{
+              _id: r.idMeal,
+              title: r.strMeal,
+              image: r.strMealThumb,
+              source: 'api',
+              isFavorited: false,
+            }}
+          />
         ))}
       </div>
 

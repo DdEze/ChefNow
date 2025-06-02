@@ -20,7 +20,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/iniciar-sesion" element={<Login />} />
         <Route path="/registrarse" element={<Register />} />
-        <Route path="/receta/:id" element={<RecipeDetail />} />
+        <Route path="/receta/:source/:id" element={<RecipeDetail />} />
         <Route path="/create" element={user ? <RecipeForm /> : <Navigate to="/iniciar-sesion" />} />
         <Route path="/my-recipes" element={user ? <MyRecipes /> : <Navigate to="/iniciar-sesion" />} />
         <Route path="/favoritos" element={user ? <Favorites /> : <Navigate to="/iniciar-sesion" />} />
