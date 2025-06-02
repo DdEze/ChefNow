@@ -40,7 +40,7 @@ export default function MyRecipes() {
   };
 
   const handleEdit = (id) => {
-    navigate(`/edit-recipe/${id}`);
+    navigate(`/editar-receta/${id}`);
   };
 
   if (!user) return <p>Debes iniciar sesión para ver tus recetas</p>;
