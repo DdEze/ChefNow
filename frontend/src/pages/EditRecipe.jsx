@@ -60,10 +60,10 @@ export default function EditRecipe() {
   if (!recipe) return null;
 
   return (
-    <div>
+    <div className="form-container">
       <h2>Editar Receta</h2>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="form-group">
           <label>Título</label>
           <input
             type="text"
@@ -74,17 +74,7 @@ export default function EditRecipe() {
           />
         </div>
 
-        <div>
-          <label>Imagen (URL)</label>
-          <input
-            type="text"
-            name="image"
-            value={recipe.image}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
+        <div className="form-group">
           <label>Categoría</label>
           <input
             type="text"
@@ -94,7 +84,7 @@ export default function EditRecipe() {
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Área</label>
           <input
             type="text"
@@ -104,30 +94,10 @@ export default function EditRecipe() {
           />
         </div>
 
-        <div>
-          <label>Video de YouTube</label>
-          <input
-            type="text"
-            name="video"
-            value={recipe.video}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label>Instrucciones</label>
-          <textarea
-            name="instructions"
-            value={recipe.instructions}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Ingredientes</label>
+        <fieldset className="form-group">
+          <legend>Ingredientes</legend>
           {recipe.ingredients.map((ing, idx) => (
-            <div key={idx}>
+            <div key={idx} className="form-group-inline">
               <input
                 type="text"
                 value={ing}
@@ -137,6 +107,36 @@ export default function EditRecipe() {
             </div>
           ))}
           <button type="button" onClick={addIngredient}>Agregar Ingrediente</button>
+        </fieldset>
+
+        <div className="form-group">
+          <label>Instrucciones</label>
+          <textarea
+            name="instructions"
+            value={recipe.instructions}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Video de YouTube</label>
+          <input
+            type="text"
+            name="video"
+            value={recipe.video}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Imagen (URL)</label>
+          <input
+            type="text"
+            name="image"
+            value={recipe.image}
+            onChange={handleChange}
+          />
         </div>
 
         <button type="submit">Guardar Cambios</button>

@@ -27,41 +27,49 @@ function Register() {
   };
 
   return (
-    <div className="register-container">
+    <div className="form-container">
       <h2>Registrarse</h2>
       <form onSubmit={handleSubmit}>
-        <input
-          name="name"
-          type="text"
-          placeholder="Nombre"
-          value={form.name}
-          onChange={handleChange}
-          required
-        /><br />
-        <input
-          name="surname"
-          type="text"
-          placeholder="Apellido"
-          value={form.surname}
-          onChange={handleChange}
-          required
-        /><br />
-        <input
-          name="email"
-          type="email"
-          placeholder="Correo electrónico"
-          value={form.email}
-          onChange={handleChange}
-          required
-        /><br />
-        <input
-          name="password"
-          type="password"
-          placeholder="Contraseña"
-          value={form.password}
-          onChange={handleChange}
-          required
-        /><br />
+        <div className="form-group">
+          <input
+            name="name"
+            type="text"
+            placeholder="Nombre"
+            value={form.name}
+            onChange={handleChange}
+            required
+          /><br />
+        </div>
+        <div className="form-group">
+          <input
+            name="surname"
+            type="text"
+            placeholder="Apellido"
+            value={form.surname}
+            onChange={handleChange}
+            required
+          /><br />
+        </div>
+        <div className="form-group">
+          <input
+            name="email"
+            type="email"
+            placeholder="Correo electrónico"
+            value={form.email}
+            onChange={handleChange}
+            required
+          /><br />
+        </div>
+        <div className="form-group">
+          <input
+            name="password"
+            type="password"
+            placeholder="Contraseña"
+            value={form.password}
+            onChange={handleChange}
+            required
+          /><br />
+        </div>
         <button type="submit">Registrarse</button>
       </form>
     </div>

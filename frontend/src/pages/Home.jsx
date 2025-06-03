@@ -69,10 +69,12 @@ function Home() {
   };
 
   useEffect(() => {
-    fetchAreas();
-    fetchCategories();
-    fetchIngredients();
+    const fetchAllFilters = async () => {
+      await Promise.all([fetchAreas(), fetchCategories(), fetchIngredients()]);
+    };
+    fetchAllFilters();
   }, []);
+
 
   return (
     <div className="home">

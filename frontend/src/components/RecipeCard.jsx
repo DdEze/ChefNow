@@ -17,7 +17,6 @@ const RecipeCard = ({ recipe }) => {
 
   return (
     <div className="recipe-card">
-      <h3>{title}</h3>
       {user && (
         <FavoriteButton
           recipeId={id}
@@ -25,7 +24,8 @@ const RecipeCard = ({ recipe }) => {
           onToggle={setFavorited}
         />
       )}
-      <img src={image} alt={title} />
+      <h3>{title}</h3>
+      <img src={image} />
       <Link to={detailPath}>Ver detalles</Link>
     </div>
   );

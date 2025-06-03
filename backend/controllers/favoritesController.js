@@ -19,19 +19,29 @@ const addFavorite = async (req, res) => {
   }
 };
 
-// Obtener todos los favoritos
 const getFavorites = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-    res.json(user.favorites);
+    const total = user.favorites.length;
+    const favoritesPage = user.favorites.slice(skip, skip + limit);
+
+    res.json({
+      total,
+      page,
+      limit,
+      favorites: favoritesPage,
+    });
   } catch (err) {
     res.status(500).json({ message: 'Error obteniendo favoritos', error: err.message });
   }
 };
 
-// Eliminar favorito
 const removeFavorite = async (req, res) => {
   const { mealId } = req.params;
 

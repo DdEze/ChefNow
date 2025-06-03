@@ -8,7 +8,7 @@ import Register from './pages/Register';
 import RecipeDetail from './pages/RecipeDetails';
 import RecipeForm from './components/RecipeForm';
 import MyRecipes from './pages/MyRecipes';
-import Favorites from './pages/Favorites';
+import FavoriteRecipes from './pages/FavoriteRecipes';
 import EditRecipe from './pages/EditRecipe';
 
 function App() {
@@ -25,7 +25,7 @@ function App() {
         <Route path="/create" element={user ? <RecipeForm /> : <Navigate to="/iniciar-sesion" />} />
         <Route path="/my-recipes" element={user ? <MyRecipes /> : <Navigate to="/iniciar-sesion" />} />
          <Route path="/editar-receta/:id" element={user ? <EditRecipe/> : <Navigate to="/iniciar-sesion" />} />
-        <Route path="/favoritos" element={user ? <Favorites /> : <Navigate to="/iniciar-sesion" />} />
+        <Route path="/favoritos" element={user ? <FavoriteRecipes /> : <Navigate to="/iniciar-sesion" />} />
       </Routes>
     </div>
   );

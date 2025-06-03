@@ -1,7 +1,6 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-
 
 export default function RecipeForm() {
   const { user } = useAuth();
@@ -12,7 +11,7 @@ export default function RecipeForm() {
   const [ingredients, setIngredients] = useState(['']);
   const [instructions, setInstructions] = useState('');
   const [video, setVideo] = useState('');
-  const [imageFile, setImageFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState('');
   const [message, setMessage] = useState('');
 
   const handleIngredientChange = (index, value) => {
@@ -36,19 +35,18 @@ export default function RecipeForm() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('category', category);
-    formData.append('area', area);
-    ingredients.forEach((ing, i) => formData.append(`ingredients[${i}]`, ing));
-    formData.append('instructions', instructions);
-    formData.append('video', video);
-    if (imageFile) formData.append('image', imageFile);
+    const payload = {
+      title,
+      category,
+      area,
+      ingredients,
+      instructions,
+      video,
+      image: imageUrl,
+    };
 
     try {
-      const res = await api.post('/recipes', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await api.post('/recipes', payload);
       setMessage('Receta creada con éxito');
       setTitle('');
       setCategory('');
@@ -56,55 +54,79 @@ export default function RecipeForm() {
       setIngredients(['']);
       setInstructions('');
       setVideo('');
-      setImageFile(null);
+      setImageUrl('');
     } catch (err) {
+      console.error(err);
       setMessage('Error creando la receta');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} encType="multipart/form-data">
-      <h2>Crear Receta</h2>
-      {message && <p>{message}</p>}
+    <div className="form-container">
+      <form onSubmit={handleSubmit}>
+        <h2>Crear Receta</h2>
+        {message && (
+          <p className={message.includes('éxito') ? 'form-success' : 'form-error'}>
+            {message}
+          </p>
+        )}
+        <div className="form-group">
+          <label htmlFor="title">Título</label>
+          <input id="title" value={title} onChange={e => setTitle(e.target.value)} required />
+        </div>
+        <div className="form-group">
+          <label>Categoría</label>
+          <input value={category} onChange={e => setCategory(e.target.value)} />
+        </div>
 
-      <label>Título</label>
-      <input value={title} onChange={e => setTitle(e.target.value)} required />
+        <div className="form-group">
+          <label>Área</label>
+          <input value={area} onChange={e => setArea(e.target.value)} />
+        </div>
 
-      <label>Categoría</label>
-      <input value={category} onChange={e => setCategory(e.target.value)} />
-
-      <label>Área</label>
-      <input value={area} onChange={e => setArea(e.target.value)} />
-
-      <label>Ingredientes</label>
-      {ingredients.map((ing, i) => (
-        <div key={i}>
-          <input
-            value={ing}
-            onChange={e => handleIngredientChange(i, e.target.value)}
+        <fieldset className="form-group">
+          <legend>Ingredientes</legend>
+          {ingredients.map((ing, i) => (
+            <div key={i} className="form-group-inline">
+              <input
+                value={ing}
+                onChange={e => handleIngredientChange(i, e.target.value)}
+                required
+              />
+              {ingredients.length > 1 && (
+                <button type="button" className="btn-remove" onClick={() => removeIngredient(i)}>Quitar</button>
+              )}
+            </div>
+          ))}
+          <button type="button" onClick={addIngredient}>Agregar ingrediente</button>
+        </fieldset>
+        
+        <div className="form-group">
+          <label>Instrucciones</label>
+          <textarea
+            value={instructions}
+            onChange={e => setInstructions(e.target.value)}
             required
           />
-          {ingredients.length > 1 && (
-            <button type="button" onClick={() => removeIngredient(i)}>Quitar</button>
-          )}
         </div>
-      ))}
-      <button type="button" onClick={addIngredient}>Agregar ingrediente</button>
+        
+        <div className="form-group">
+          <label>Video (URL)</label>
+          <input value={video} onChange={e => setVideo(e.target.value)} />
+        </div>
 
-      <label>Instrucciones</label>
-      <textarea
-        value={instructions}
-        onChange={e => setInstructions(e.target.value)}
-        required
-      />
+        <div className="form-group">
+          <label>Imagen (URL)</label>
+          <input
+            type="url"
+            value={imageUrl}
+            onChange={e => setImageUrl(e.target.value)}
+            placeholder="https://example.com/imagen.jpg"
+          />
+        </div>
 
-      <label>Video (URL)</label>
-      <input value={video} onChange={e => setVideo(e.target.value)} />
-
-      <label>Imagen</label>
-      <input type="file" accept="image/*" onChange={e => setImageFile(e.target.files[0])} />
-
-      <button type="submit">Crear</button>
-    </form>
+        <button type="submit">Crear</button>
+      </form>
+    </div>
   );
 }

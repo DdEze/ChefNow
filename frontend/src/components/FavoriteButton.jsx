@@ -1,24 +1,32 @@
-import { useState } from 'react';
-import { toggleFavorite } from '../services/recipeService';
+import React, { useState, useEffect } from 'react';
+import { api } from '../services/api';
 
-const FavoriteButton = ({ recipeId, isFavorited, onToggle }) => {
-  const [loading, setLoading] = useState(false);
+const FavoriteButton = ({ recipeId, isFavorited = false, onToggle }) => {
+  const [favorited, setFavorited] = useState(isFavorited);
 
-  const handleClick = async () => {
-    setLoading(true);
+  useEffect(() => {
+    setFavorited(isFavorited); 
+  }, [isFavorited]);
+
+  const toggleFavorite = async () => {
     try {
-      const updated = await toggleFavorite(recipeId);
-      onToggle(updated.favorited);
+      if (favorited) {
+        await api.delete(`/favorites/${recipeId}`);
+        setFavorited(false);
+        onToggle && onToggle(false);
+      } else {
+        await api.post('/favorites', { mealId: recipeId, source: recipeId.length === 24 ? 'custom' : 'external' });
+        setFavorited(true);
+        onToggle && onToggle(true);
+      }
     } catch (err) {
-      console.error('Error al actualizar favorito', err);
-    } finally {
-      setLoading(false);
+      console.error('Error al cambiar favorito:', err);
     }
   };
 
   return (
-    <button onClick={handleClick} disabled={loading}>
-      {isFavorited ? '❤️ Quitar' : '🤍 Favorito'}
+    <button onClick={toggleFavorite}>
+      {favorited ? '❤️' : '🤍'}
     </button>
   );
 };
