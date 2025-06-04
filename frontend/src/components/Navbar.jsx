@@ -6,7 +6,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <Link to="/">Inicio</Link>
+        <Link to="/" className="navbar-logo">ChefNow 🍳</Link>
         {user && (
           <>
             <Link to="/create">Crear receta</Link>
