@@ -17,7 +17,7 @@ const RecipeCard = ({ recipe }) => {
     <div className="recipe-card">
       {user && <FavoriteButton recipeId={id} />}
       <h3>{title}</h3>
-      <img src={image} alt={title} />
+      <img className="recipe-image" src={image} alt={title} />
       <Link to={detailPath}>Ver detalles</Link>
     </div>
   );
