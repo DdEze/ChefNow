@@ -112,6 +112,7 @@ chefnow/
 │   │   │   ├── Home.jsx
 │   │   │   ├── Login.jsx
 │   │   │   ├── MyRecipes.jsx
+│   │   │   ├── Profile.jsx
 │   │   │   ├── RecipeDetails.jsx
 │   │   │   └── Register.jsx
 │   │   ├── services/
