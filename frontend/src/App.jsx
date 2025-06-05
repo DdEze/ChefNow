@@ -10,6 +10,7 @@ import RecipeForm from './components/RecipeForm';
 import MyRecipes from './pages/MyRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
 import EditRecipe from './pages/EditRecipe';
+import Profile from './pages/Profile';
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -24,8 +25,9 @@ function App() {
         <Route path="/receta/:source/:id" element={<RecipeDetail />} />
         <Route path="/create" element={user ? <RecipeForm /> : <Navigate to="/iniciar-sesion" />} />
         <Route path="/my-recipes" element={user ? <MyRecipes /> : <Navigate to="/iniciar-sesion" />} />
-         <Route path="/editar-receta/:id" element={user ? <EditRecipe/> : <Navigate to="/iniciar-sesion" />} />
+        <Route path="/editar-receta/:id" element={user ? <EditRecipe/> : <Navigate to="/iniciar-sesion" />} />
         <Route path="/favoritos" element={user ? <FavoriteRecipes /> : <Navigate to="/iniciar-sesion" />} />
+        <Route path="/perfil" element={user ? <Profile/> : <Navigate to="/iniciar-sesion" />} />
       </Routes>
     </div>
   );

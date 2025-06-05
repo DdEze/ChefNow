@@ -90,4 +90,33 @@ const getUserById = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, getProfile, deleteUser, getUserById };
+const changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Faltan datos obligatorios' });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Contraseña actual incorrecta' });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNewPassword;
+    await user.save();
+
+    res.json({ message: 'Contraseña actualizada correctamente' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al cambiar la contraseña', error: err.message });
+  }
+};
+
+
+module.exports = { registerUser, loginUser, getProfile, deleteUser, getUserById, changePassword };

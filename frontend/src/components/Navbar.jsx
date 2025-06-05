@@ -19,7 +19,11 @@ function Navbar() {
       <div className="navbar-right">
         {user ? (
           <>
-            <span className="navbar-user">Hola, {`${user.surname} ${user.name}` || 'Usuario'}</span>
+            <Link to="/perfil">
+              <span className="navbar-user">
+                Hola, {user?.surname && user?.name ? `${user.surname} ${user.name}` : 'Usuario'}
+              </span>
+            </Link>
             <button onClick={logout}>Salir</button>
           </>
         ) : (
