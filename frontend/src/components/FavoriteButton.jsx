@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
-const FavoriteButton = ({ recipeId, isFavorited = false, onToggle }) => {
-  const [favorited, setFavorited] = useState(isFavorited);
+const FavoriteButton = ({ recipeId, onToggle }) => {
+  const [favorited, setFavorited] = useState(false);
 
+  // Consultar si la receta está en favoritos al montar
   useEffect(() => {
-    setFavorited(isFavorited); 
-  }, [isFavorited]);
+    const checkIfFavorited = async () => {
+      try {
+        const res = await api.get(`/favorites/${recipeId}`);
+        setFavorited(res.data.isFavorited);
+      } catch (err) {
+        console.error('Error al verificar favorito:', err);
+      }
+    };
+
+    checkIfFavorited();
+  }, [recipeId]);
 
   const toggleFavorite = async () => {
     try {

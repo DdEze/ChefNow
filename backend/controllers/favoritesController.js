@@ -58,4 +58,14 @@ const removeFavorite = async (req, res) => {
   }
 };
 
-module.exports = { addFavorite, getFavorites, removeFavorite };
+const isRecipeFavorited = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const isFavorited = user.favorites.some(fav => fav.mealId === req.params.mealId);
+    res.json({ isFavorited });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al verificar favorito' });
+  }
+};
+
+module.exports = { addFavorite, getFavorites, removeFavorite, isRecipeFavorited };

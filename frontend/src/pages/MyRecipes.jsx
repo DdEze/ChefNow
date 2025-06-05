@@ -13,35 +13,34 @@ export default function MyRecipes() {
   const recipesPerPage = 6;
 
   useEffect(() => {
-    if (!user) return;
-    fetchRecipes();
+    if (user) {
+      fetchRecipes();
+    }
   }, [user]);
 
   const fetchRecipes = async () => {
     try {
       const res = await api.get('/recipes/mine');
-      setRecipes(res.data);
+      setRecipes(res.data || []);
       setError('');
     } catch (err) {
+      console.error(err);
       setError('Error al cargar tus recetas');
     }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('¿Estás seguro de que deseas eliminar esta receta?')) return;
-
     try {
       await api.delete(`/recipes/${id}`);
-      setRecipes(recipes.filter((r) => r._id !== id));
+      setRecipes(prev => prev.filter((r) => r._id !== id));
     } catch (err) {
       console.error(err);
       setError('Error al eliminar la receta');
     }
   };
 
-  const handleEdit = (id) => {
-    navigate(`/editar-receta/${id}`);
-  };
+  const handleEdit = (id) => navigate(`/editar-receta/${id}`);
 
   if (!user) return <p>Debes iniciar sesión para ver tus recetas</p>;
 
@@ -74,11 +73,11 @@ export default function MyRecipes() {
           </div>
 
           <div className="pagination-controls">
-            <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+            <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1}>
               Anterior
             </button>
             <span>Página {currentPage} de {totalPages}</span>
-            <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
+            <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
               Siguiente
             </button>
           </div>

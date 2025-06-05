@@ -1,6 +1,6 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { fetchRecipes } from '../services/recipes';
-import axios from 'axios';
 import RecipeCard from '../components/RecipeCard';
 
 function Home() {
@@ -20,33 +20,14 @@ function Home() {
   const paginatedRecipes = recipes.slice(startIndex, startIndex + recipesPerPage);
   const totalPages = Math.ceil(recipes.length / recipesPerPage);
 
-  const fetchAreas = async () => {
+  const fetchFilters = async (url, setter, mapper) => {
     try {
-      const res = await axios.get('https://www.themealdb.com/api/json/v1/1/list.php?a=list');
-      const areaList = res.data.meals.map(a => a.strArea);
-      setAreas(areaList);
+      const res = await axios.get(url);
+      if (res.data?.meals) {
+        setter(res.data.meals.map(mapper));
+      }
     } catch (error) {
-      console.error('Error al obtener áreas:', error.message);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const res = await axios.get('https://www.themealdb.com/api/json/v1/1/list.php?c=list');
-      const categoryList = res.data.meals.map(c => c.strCategory);
-      setCategories(categoryList);
-    } catch (error) {
-      console.error('Error al obtener categorías:', error.message);
-    }
-  };
-
-  const fetchIngredients = async () => {
-    try {
-      const res = await axios.get('https://www.themealdb.com/api/json/v1/1/list.php?i=list');
-      const ingredientList = res.data.meals.map(i => i.strIngredient);
-      setIngredients(ingredientList);
-    } catch (error) {
-      console.error('Error al obtener ingredientes:', error.message);
+      console.error(`Error al obtener datos desde ${url}:`, error.message);
     }
   };
 
@@ -59,8 +40,9 @@ function Home() {
     } catch (err) {
       console.error('Error al buscar recetas', err);
       setRecipes([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSearch = (e) => {
@@ -69,12 +51,10 @@ function Home() {
   };
 
   useEffect(() => {
-    const fetchAllFilters = async () => {
-      await Promise.all([fetchAreas(), fetchCategories(), fetchIngredients()]);
-    };
-    fetchAllFilters();
+    fetchFilters('https://www.themealdb.com/api/json/v1/1/list.php?a=list', setAreas, a => a.strArea);
+    fetchFilters('https://www.themealdb.com/api/json/v1/1/list.php?c=list', setCategories, c => c.strCategory);
+    fetchFilters('https://www.themealdb.com/api/json/v1/1/list.php?i=list', setIngredients, i => i.strIngredient);
   }, []);
-
 
   return (
     <div className="home">
@@ -87,7 +67,6 @@ function Home() {
           onChange={(e) => setQuery(e.target.value)}
         />
 
-        {/* Select categoría */}
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="">-- Categoría --</option>
           {categories.map(c => (
@@ -95,7 +74,6 @@ function Home() {
           ))}
         </select>
 
-        {/* Select área */}
         <select value={area} onChange={(e) => setArea(e.target.value)}>
           <option value="">-- Área / país --</option>
           {areas.map(a => (
@@ -103,7 +81,6 @@ function Home() {
           ))}
         </select>
 
-        {/* Select ingrediente */}
         <select value={ingredient} onChange={(e) => setIngredient(e.target.value)}>
           <option value="">-- Ingrediente --</option>
           {ingredients.map(i => (
@@ -117,7 +94,7 @@ function Home() {
       {loading && <p>Cargando recetas...</p>}
 
       <div className="recipe-list">
-        {paginatedRecipes.length === 0 && !loading && <p>No se encontraron recetas</p>}
+        {!loading && paginatedRecipes.length === 0 && <p>No se encontraron recetas</p>}
         {paginatedRecipes.map((r) => (
           <RecipeCard
             key={r.idMeal}
